@@ -1,0 +1,141 @@
+---
+title: "first look at the dataset"
+output: html_notebook
+---
+
+- library data
+- automation
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+crossref_data <- read_csv("https://raw.githubusercontent.com/LibraryCarpentry/lc-open-refine/gh-pages/data/doaj-article-sample.csv", 
+    col_types = cols(Date = col_date(format = "%m/%d/%Y")))
+```
+
+
+```{r}
+crossref_data
+```
+
+```{r}
+crossref_data %>% 
+  count(Language)
+```
+
+```{r}
+crossref_data %>% 
+  count(Licence)
+```
+
+```{r}
+crossref_data %>% 
+  count(Publisher)
+```
+
+```{r}
+crossref_data %>% 
+  count(Authors) %>% 
+  arrange(-n)
+```
+
+
+```{r}
+dim(as_tibble(str_split(crossref_data$Authors[5], "\\|", simplify = TRUE)))[2]
+
+str_count(crossref_data$Authors[1:5], "\\|")
+```
+
+```{r}
+crossref_data %>% 
+  select(Authors) %>% 
+  mutate(multi_authorship = str_count(Authors, "\\|") + 1) %>% 
+  select(Authors, multi_authorship)
+```
+
+
+```{r}
+crossref_data %>% 
+  select(Authors) %>% 
+  mutate(multi_authorship = str_count(Authors, "\\|") + 1) %>% 
+  select(multi_authorship, Authors) %>% 
+  ggplot() +
+  aes(multi_authorship) +
+  geom_histogram()
+```
+
+
+
+```{r}
+auth_count <- crossref_data %>% 
+  select(Authors) %>% 
+  mutate(multi_authorship = str_count(Authors, "\\|") + 1) %>% 
+  mutate(multi_authorship = as.character(multi_authorship)) %>% 
+  select(multi_authorship, Authors)
+
+ggplot(auth_count) +
+  aes(fct_rev(fct_infreq(multi_authorship))) +
+  geom_bar() +
+  coord_flip()
+```
+
+
+
+```{r}
+crossref_data %>% 
+  mutate(SH_count = str_count(Subjects, "\\|") + 1) %>% 
+  mutate(SH_count = as.character(SH_count)) %>% 
+  ggplot() +
+  aes(fct_rev(fct_infreq(SH_count))) +
+  geom_bar() +
+  coord_flip()
+
+crossref_data %>% 
+  mutate(SH_count = str_count(Subjects, "\\|") + 1) %>% 
+  ggplot() +
+  aes(SH_count) +
+  geom_histogram() 
+```
+
+
+## Language transformations
+
+```{r}
+crossref_data %>% 
+  count(Language)
+```
+
+
+```{r}
+crossref_data <- crossref_data %>% 
+  mutate(Language = case_when(
+    Language == "EN" ~ "English",
+    Language == "ES" ~ "Spanish",
+    Language == "FR" ~ "French"
+  )) 
+```
+
+
+```{r}
+crossref_data %>% 
+  ggplot() +
+  aes(fct_rev(fct_infreq(Language)), fill = Publisher) +
+  geom_bar() +
+  coord_flip() +
+  theme(legend.position="top") 
+```
+
+
+```{r}
+crossref_data %>% 
+  filter(is.na(Language)) %>% 
+  ggplot() +
+  aes(fct_rev(fct_infreq(Language)), fill = Publisher) +
+  geom_bar() +
+  coord_flip() +
+  theme(legend.position="top") 
+```
+
