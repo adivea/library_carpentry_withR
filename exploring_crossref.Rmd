@@ -184,3 +184,15 @@ crossref_data %>%
   theme(legend.position="top") 
 ```
 
+## Time Series
+
+```{r}
+crossref_data %>% 
+  count(Date) %>% 
+  ggplot(aes(Date, n)) +
+  geom_point() +
+  geom_line() +
+  ggtitle("Publishing Date Frequency", subtitle = "One Week in January, 2015")
+  
+```
+
