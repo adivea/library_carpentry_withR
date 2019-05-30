@@ -21,20 +21,20 @@ workshop for [Library Carpentry](https://librarycarpentry.org/)
       - Approach: Open Source and CC-BY are foundational.
 
   - For anyone intending to develop a core data savvy competency that
-    extends beyond a compfortable beginner, using a fully capable data
-    science scripting lanagugage is the best midterm to longterm
+    extends beyond a comfortable beginner, using a fully capable data
+    science scripting language is the best midterm to long-term
     investment from a skill building perspective.
 
 Narrative: R has become and tool of choice for data science
-explorations. **R** - a statistical programming langaugage - and
+explorations. **R** - a statistical programming language - and
 **Tidyverse** - a consistent way of applying and learning data science -
-are an excellent toolsuite that can can be broadly applied to many
+are an excellent toolkit that can can be broadly applied to many
 advanced beginner to advanced intermediate data summation projects. R,
-as a tool, lends itelf to porfioio building, to reproducibility, to
+as a tool, lends itself to portfolio building, to reproducible, to
 version control, to flexible and reproducible report writing, to
 generating various reports from one script, to web scraping and web
 publishing, and to extensible data savvy techniques. The tool can have a
-steep learning curve but will cary a researcher farther entry level
+steep learning curve but will carry a researcher farther entry level
 tools which are designed for easy of use but that quickly reach an
 efficiency barrier that is problematic for scalable sharing and
 collaborative coding.
