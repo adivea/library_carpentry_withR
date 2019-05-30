@@ -12,6 +12,7 @@ output: html_notebook
 
 ```{r}
 library(tidyverse)
+library(skimr)
 ```
 
 ## Get Data
@@ -27,6 +28,13 @@ crossref_data <- read_csv("https://raw.githubusercontent.com/LibraryCarpentry/lc
 ```{r}
 crossref_data
 ```
+
+## skimr
+
+```{r}
+skim(crossref_data)
+```
+
 
 ## Facetting
 
