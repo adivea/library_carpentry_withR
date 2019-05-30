@@ -1,6 +1,9 @@
 ---
 title: "first look at the dataset"
-output: html_notebook
+output:
+  pdf_document: default
+  html_notebook: default
+  word_document: default
 ---
 
 - library data
