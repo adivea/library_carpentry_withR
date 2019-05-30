@@ -27,3 +27,10 @@ This is an exploration of how to bootstrap an *Introduction to R* workshop for [
     
 Narrative:  R has become and tool of choice for data science explorations.  **R** - a statistical programming language - and **Tidyverse** - a consistent way of applying and learning data science - are an excellent toolkit that can can be broadly applied to many advanced beginner to advanced intermediate data summation projects.  R, as a  tool, lends itself to portfolio building, to reproducible, to version control, to flexible and reproducible report writing, to generating various reports from one script, to web scraping and web publishing, and to extensible data savvy techniques.  The tool can have a steep learning curve but will carry a researcher farther entry level tools which are designed for easy of use but that quickly reach an efficiency barrier that is problematic for scalable sharing and collaborative coding.
 
+## Process
+
+1. Explore OpenRefine CrossRef dataset (exploring_crossref.Rmd)
+1. Fork DataCarpentry's _R for Soc Sci_
+1. Apply OpenRefine Examples over top of DC's _R for Soc Sci_
+1. Pitch to A.Zoss
+1. Pitch back to C.Eardman (meanwhile, CE will beging a loop in at his end)

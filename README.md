@@ -38,3 +38,12 @@ steep learning curve but will carry a researcher farther entry level
 tools which are designed for easy of use but that quickly reach an
 efficiency barrier that is problematic for scalable sharing and
 collaborative coding.
+
+## Process
+
+1.  Explore OpenRefine CrossRef dataset (exploring\_crossref.Rmd)
+2.  Fork DataCarpentry’s *R for Soc Sci*
+3.  Apply OpenRefine Examples over top of DC’s *R for Soc Sci*
+4.  Pitch to A.Zoss
+5.  Pitch back to C.Eardman (meanwhile, CE will beging a loop in at his
+    end)
