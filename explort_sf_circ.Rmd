@@ -1,0 +1,106 @@
+---
+title: "SF circ data -- explore"
+author: "John Little"
+date: "`r Sys.Date()`"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(skimr)
+```
+
+Data are ILS data on Library Usage from the City of San Francisco
+
+- https://catalog.data.gov/dataset/library-usage
+- https://data.sfgov.org/Culture-and-Recreation/Library
+
+```{r}
+circ_sf <- read_csv("data/Library_Usage.csv")
+
+glimpse(circ_sf)
+```
+ 
+```{r}
+skim(circ_sf)
+```
+ 
+ Looks like several fields are empty. Let's drop them.
+
+```{r}
+circ_sf <- circ_sf %>% 
+  select(- `Analysis Neighborhoods`, -`Current Police Districts`, 
+         -`Current Supervisor Districts`, -`Location (city)`, 
+         -`Location (state)`, -`Location (zip)`,
+         -`SF Find Neighborhoods`)
+
+skim(circ_sf)
+```
+
+What is Circulation Year Active?
+
+```{r}
+fct_count(circ_sf$`Circulation Active Year`, sort = TRUE)
+```
+
+What is Total Checkouts?  
+
+```{r}
+circ_sf %>% 
+  filter(`Circulation Active Year` != "None") %>% 
+  count(`Total Checkouts`, sort = TRUE)
+
+circ_sf %>% 
+  filter(`Circulation Active Year` != "None") %>% 
+  summarise(mean(`Total Checkouts`), median(`Total Checkouts`))
+```
+
+```{r}
+circ_sf %>% 
+  filter(`Circulation Active Year` != "None") %>%
+  filter( `Circulation Active Year` <400) %>% 
+  ggplot(aes(`Total Checkouts`)) +
+  geom_histogram(binwidth = 5) +
+  xlim(0, 1000) +
+  ylim(0, 16000)
+```
+
+
+```{r}
+fct_count(circ_sf$`Patron Type Definition`, sort = TRUE)
+
+ggplot(circ_sf, aes(fct_rev(fct_infreq(fct_lump(`Patron Type Definition`, prop = .003))), 
+                    fill = `Age Range`)) +
+  geom_bar() +
+  coord_flip() +
+  labs(fill = "Age",
+       x = "Patron Type",
+       title = "Patron Status",
+       subtitle = "SF Public Library",
+       caption = "data.sfgov.org")
+```
+
+
+```{r}
+circ_sf2 <- circ_sf %>% 
+  mutate(circ_month = as_factor(`Circulation Active Month`)) %>% 
+  mutate(circ_month = fct_relevel(circ_month, 
+                                  levels =c("January", "February", "March",  
+                                            "April", "May", "June", "July",
+                                            "August", "September", "October",
+                                            "November", "December"))) %>% 
+  mutate(circ_month = na_if(circ_month, "None"))
+
+ggplot(circ_sf2, 
+       aes(fct_lump(`Circulation Active Year`, n = 6), 
+                     fill = circ_month)) +
+  geom_bar() +
+  labs(title = "Circulation by Year",
+       subtitle = "SF Public Library",
+       x = "Year", fill = "Month",
+       caption = "data.sfgov.org") 
+```
+
+
+
+
