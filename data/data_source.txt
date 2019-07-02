@@ -1,0 +1,13 @@
+Data are from San Francisco
+
+https://catalog.data.gov/dataset/library-usage
+
+Access & Use Information
+Public: This dataset is intended for public access and use.  https://project-open-data.cio.gov/v1.1/schema/#accessLevel
+
+Non-Federal: This dataset is covered by different Terms of Use than Data.gov.
+
+ License: See this page for license information.  http://opendatacommons.org/licenses/pddl/1.0/
+
+
+https://data.sfgov.org/Culture-and-Recreation/Library-Usage/qzz6-2jup
