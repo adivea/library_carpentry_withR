@@ -26,56 +26,62 @@ Crossref data used from the **Setup** to the [LC OpenRefine Workshop](https://li
 crossref_data <- read_csv("https://raw.githubusercontent.com/LibraryCarpentry/lc-open-refine/gh-pages/data/doaj-article-sample.csv", 
     col_types = cols(Date = col_date(format = "%m/%d/%Y")))
 ```
-
+Take a quick look at the data
 
 ```{r}
+glimpse(crossref_data)
 crossref_data
 ```
 
 ## skimr
+
+Skimr is a easy way to have a quick look at the variables in the data frame.  In this case the data are mostly character string data.  With numeric data skimr will produce a thumbnail histogram (sparkline )
 
 ```{r}
 skim(crossref_data)
 ```
 
 
-## Facetting
+## Faceting
 
-Generate a quick table of the languages represented in the dataframe.  Looks like English (spelled two different ways), FRench and ?Spanish? (represented by ES).
+Two methods to generate a quick table of the languages represented in the dataframe:  `count()` and `forcats::fct_count`.  Since these data are primarily character, it's helpful to learn about factor data and the forcats package. These two tables are the same.  It looks like the data are published in English (spelled two different ways), FRench and Spanish.
 
 ```{r}
 crossref_data %>% 
   count(Language)
+
+fct_count(crossref_data$Language, sort = TRUE)
 ```
 
-This time, facet on the governing license
+This time, facet on the governing license.  All but six articles are covered by a [createive commons](https://creativecommons.org/) license.
 
 ```{r}
 crossref_data %>% 
   count(Licence)
 ```
 
-Facet on the publisher
+Facet on the publisher.  Sort in descending order.
 
 ```{r}
 crossref_data %>% 
-  count(Publisher)
+  count(Publisher, sort = TRUE)
 ```
 
 Facet by authors, and sort by the most prolific.  This field appears to be a multi-valued field that is pipe `|` separated.  How do we count and visualize how many articles have multiple authors?
 
 ```{r}
 crossref_data %>% 
-  count(Authors) %>% 
-  arrange(-n)
+  count(Authors, sort = TRUE) 
 ```
 
-Exploring some methods to generate a cound of the pipe delimeter.  `stringr::str_count()` appears to be a great way to calculate this.
+The above table is not very useful (unless tracking publishing teams that are always expressed identically.)  Let's exploring some methods to generate a count of the pipe character separating each author in a single author field.  The `stringr::str_count()` function is a great way to calculate the number of delimiters in each author field.  
+
+Note that counting a pipe character `|` requires using a Regular Expression, or [regex](https://en.wikipedia.org/wiki/Regular_expression).  Anyone manipulating string characters with computers will be far more capable after spending some time learning about regular expressions.  In this case the we're looking for a pipe character `|`.  The special trick, here, in understanding regex is to know that a pipe character has special meaning.  Therefore we have to escape, or make it know that we want the literal pipe character and not the special meaning pipe character.   To escape a character in regex one uses a backslash `\`.  But the weird part is that, in R, one has to escape the the escape character:  `\\|` means look for a literal `|`.
+
+Below we count the number of pipe characters in each row of the Author field.  Using the `head` function we only display the first six values (rows) in the Author column.
 
 ```{r}
-dim(as_tibble(str_split(crossref_data$Authors[5], "\\|", simplify = TRUE)))[2]
-
-str_count(crossref_data$Authors[1:5], "\\|")
+str_count(crossref_data$Authors, "\\|") %>% head()
 ```
 
 ## Transform Data
@@ -102,10 +108,10 @@ crossref_data %>%
   select(multi_authorship, Authors) %>% 
   ggplot() +
   aes(multi_authorship) +
-  geom_histogram()
+  geom_histogram(binwidth = 1)
 ```
 
-This time generate as a bargraph and sort by the most frequent representation.  Articles with five authors is the most frequent representation in the dataset. 
+This time generate as a bar graph and sort by the most frequent representation.  Articles with five authors is the most frequent representation in the dataset. 
 
 ```{r}
 auth_count <- crossref_data %>% 
@@ -115,29 +121,28 @@ auth_count <- crossref_data %>%
   select(multi_authorship, Authors)
 
 ggplot(auth_count) +
-  aes(fct_rev(fct_infreq(multi_authorship))) +
+  aes(fct_infreq(multi_authorship)) +
   geom_bar() +
-  coord_flip()
+  ggtitle("Multiple Authorship")
 ```
 
 ### Explore Subject Headings
 
-Visualize the frequency of multiple subject headings, just as with authors (A bargraph and a histogram)
+Visualize the frequency of multiple subject headings, just as with authors (A bar graph and a histogram)
 
 ```{r}
 crossref_data %>% 
   mutate(SH_count = str_count(Subjects, "\\|") + 1) %>% 
   mutate(SH_count = as.character(SH_count)) %>% 
   ggplot() +
-  aes(fct_rev(fct_infreq(SH_count))) +
-  geom_bar() +
-  coord_flip()
+  aes(fct_infreq(SH_count)) +
+  geom_bar()
 
 crossref_data %>% 
   mutate(SH_count = str_count(Subjects, "\\|") + 1) %>% 
   ggplot() +
   aes(SH_count) +
-  geom_histogram() 
+  geom_histogram(binwidth = 1) 
 ```
 
 
@@ -152,6 +157,7 @@ crossref_data %>%
   count(Language)
 ```
 
+Since `EN` and `English` are synonymous, let's combine them into a single value.  `case_when` is a great function for collapsing values.
 
 ```{r}
 crossref_data <- crossref_data %>% 
@@ -164,15 +170,13 @@ crossref_data <- crossref_data %>%
 
 ### Visualize the Languages. 
 
-Stacked Bargraph shows frequency by Language. Each stack of a bar distinguishes the publishers. English Language is huge and somewhat over-powers the reset of the graph.  Make a second graph (below) to drill down on the lesser represented languages.
+Stacked Bar graph shows frequency by Language. Each stack of a bar distinguishes the publishers. English Language is huge and somewhat over-powers the reset of the graph.  Make a second graph (below) to drill down on the lesser represented languages.
 
 ```{r}
 crossref_data %>% 
   ggplot() +
-  aes(fct_rev(fct_infreq(Language)), fill = Publisher) +
-  geom_bar() +
-  coord_flip() +
-  theme(legend.position="top") 
+  aes(fct_infreq(Language), fill = Publisher) +
+  geom_bar()
 ```
 
 Filter the data to show only the "NA", "French", and "Spanish".
@@ -181,10 +185,11 @@ Filter the data to show only the "NA", "French", and "Spanish".
 crossref_data %>% 
   filter(is.na(Language) | Language == "French" | Language == "Spanish") %>% 
   ggplot() +
-  aes(fct_rev(fct_infreq(Language)), fill = Publisher) +
+  aes(fct_infreq(Language), fill = Publisher) +
   geom_bar() +
-  coord_flip() +
-  theme(legend.position="top") 
+  labs(title = "Published Languages",
+       subtitle = "NA or Non-English",
+       caption = "Data Source: Crossref.org")
 ```
 
 ## Time Series
@@ -195,7 +200,8 @@ crossref_data %>%
   ggplot(aes(Date, n)) +
   geom_point() +
   geom_line() +
-  ggtitle("Publishing Date Frequency", subtitle = "One Week in January, 2015")
+  labs("Publishing Frequency by Day", 
+       subtitle = "January, 2015")
   
 ```
 
