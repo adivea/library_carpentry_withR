@@ -5,15 +5,31 @@ date: "`r Sys.Date()`"
 output: html_notebook
 ---
 
-```{r}
+```{r message=TRUE, warning=TRUE}
 library(tidyverse)
 library(skimr)
+library(fs)
 ```
 
 Data are ILS data on Library Usage from the City of San Francisco
 
 - https://catalog.data.gov/dataset/library-usage
 - https://data.sfgov.org/Culture-and-Recreation/Library
+
+## Get Data
+
+This is a large file (36.4 MB) from data.sfgov.org.  It's not super simple to upload it to GitHub but the code chunk below will download the file, and only if you don't already have it.
+
+```{r}
+dir_create("data")
+
+if (!file_exists("data/Library_Usage.csv")) {
+  download.file("https://data.sfgov.org/api/views/qzz6-2jup/rows.csv?accessType=DOWNLOAD", 
+                destfile = "data/Library_Usage.csv")
+}
+```
+
+
 
 ```{r}
 circ_sf <- read_csv("data/Library_Usage.csv")
