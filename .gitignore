@@ -40,3 +40,6 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 .Rproj.user
+
+# Data from data.gov
+data/Library_Usage.csv
