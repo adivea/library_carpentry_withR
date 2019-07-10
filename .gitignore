@@ -13,6 +13,10 @@ rsconnect
 data/*.zip
 2008.csv
 
+# Data from data.gov
+Library_Usage.csv
+SAFI_clean.csv
+
 # Example code in package build process
 *-Ex.R
 
@@ -41,5 +45,3 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 
-# Data from data.gov
-data/Library_Usage.csv

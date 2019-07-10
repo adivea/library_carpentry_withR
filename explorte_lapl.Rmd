@@ -1,0 +1,85 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(fs)
+```
+
+
+```{r}
+circ_lapl <- read_csv('https://github.com/ucla-data-archive/elag2018-shiny/raw/gh-pages/pages/data/Public_Library_Monthly_Circulation.csv')
+```
+
+```{r}
+circ_lapl
+```
+
+
+```{r}
+unique(circ_lapl$City)
+```
+
+
+
+```{r}
+proper_la <- circ_lapl %>% 
+  filter(City == "Los Angeles") %>% 
+  group_by(`Library Name`) %>% 
+  summarise(total_circ = sum(Circulation)) %>% 
+  arrange(-total_circ) 
+
+proper_la
+  
+```
+
+
+```{r}
+ggplot(proper_la) +
+  geom_col(aes(x =fct_reorder(`Library Name`, total_circ),
+               y = total_circ)) +
+  coord_flip()
+```
+
+```{r}
+circ_lapl %>% 
+  filter(City == "Los Angeles") %>% 
+  ggplot() +
+  geom_col(aes(x =fct_reorder(`Library Name`, Circulation),
+               y = Circulation,
+               fill = as.character(Year))) +
+  coord_flip()
+  
+```
+
+
+```{r}
+ggplot(circ_lapl %>% 
+         filter(City == "Los Angeles") %>%
+         mutate(month_year = lubridate::mdy(`Month-Year`))) +
+  geom_line(aes(x = month_year, y = Circulation)) +
+              facet_wrap(~ `Library Name`) + 
+  theme(axis.text.x = element_text(face="bold",
+                           size=10, angle=75))
+```
+
+
+```{r}
+ggplot(circ_lapl %>% 
+         filter(City == "Los Angeles") %>%
+         mutate(month_year = lubridate::mdy(`Month-Year`))) +
+  geom_line(aes(x = month_year, y = Circulation, color = as.character(Year))) +
+              facet_wrap(~ `Library Name`) + 
+  theme(axis.text.x = element_text(face="bold",
+                           size=10, angle=75))
+```
+
+```{r}
+ggplot(circ_lapl %>% 
+         filter(City == "Los Angeles") %>%
+         mutate(month_year = lubridate::mdy(`Month-Year`))) +
+  geom_line(aes(x = month_year, y = Circulation, color = `Library Name`)) 
+```
+
