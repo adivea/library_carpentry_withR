@@ -16,6 +16,7 @@ output:
 ```{r}
 library(tidyverse)
 library(skimr)
+library(plotly)
 ```
 
 ## Get Data
@@ -173,10 +174,12 @@ crossref_data <- crossref_data %>%
 Stacked Bar graph shows frequency by Language. Each stack of a bar distinguishes the publishers. English Language is huge and somewhat over-powers the reset of the graph.  Make a second graph (below) to drill down on the lesser represented languages.
 
 ```{r}
-crossref_data %>% 
+published_languages_bargraph <- crossref_data %>% 
   ggplot() +
   aes(fct_infreq(Language), fill = Publisher) +
   geom_bar()
+
+published_languages_bargraph
 ```
 
 Filter the data to show only the "NA", "French", and "Spanish".
@@ -195,7 +198,7 @@ crossref_data %>%
 ## Time Series
 
 ```{r}
-crossref_data %>% 
+published_over_time <- crossref_data %>% 
   count(Date) %>% 
   ggplot(aes(Date, n)) +
   geom_point() +
@@ -203,5 +206,19 @@ crossref_data %>%
   labs("Publishing Frequency by Day", 
        subtitle = "January, 2015")
   
+published_over_time
+```
+## Interactive
+
+Using Plottly's `ggplotly` function, generate visualizations that are available for interactive mousing (i.e. subsetting and exploring).  Gadgets such as sliders, drop-down menus, selection boxes and radio buttons are available and especially useful when combining library(crosstalk) with library(flexdashboards) [as seen in the opening tab of this demonstration dashboard](https://rfun-flexdashboards.netlify.com/)
+
+
+```{r}
+ggplotly(published_languages_bargraph)
+```
+
+
+```{r}
+ggplotly(published_over_time)
 ```
 
