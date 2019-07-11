@@ -5,18 +5,22 @@ date: "`r Sys.Date()`"
 output: html_notebook
 ---
 
-```{r message=TRUE, warning=TRUE}
+## Load Library Packages
+
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(skimr)
 library(fs)
 ```
+
+## Data Data
 
 Data are ILS data on Library Usage from the City of San Francisco
 
 - https://catalog.data.gov/dataset/library-usage
 - https://data.sfgov.org/Culture-and-Recreation/Library
 
-## Get Data
+### Get Data
 
 This is a large file (36.4 MB) from data.sfgov.org.  It's not super simple to upload it to GitHub but the code chunk below will download the file, and only if you don't already have it.
 
@@ -29,23 +33,29 @@ if (!file_exists("data/Library_Usage.csv")) {
 }
 ```
 
+### Import Data
 
+Import the data and have a glimpse at the data types.
 
 ```{r}
 circ_sf <- read_csv("data/Library_Usage.csv")
 
 glimpse(circ_sf)
 ```
+
+### Skim Data
+
+Have a quick look, with skimmr, of the various data variables.  What are the data types, what ranges of data fill out each variable.
  
 ```{r}
 skim(circ_sf)
 ```
  
- Looks like several fields are empty. Let's drop them.
+It looks like several fields are empty. Let's drop them and then have another skim into the data.  It's the same data without a bunch of empty fields.
 
 ```{r}
 circ_sf <- circ_sf %>% 
-  select(- `Analysis Neighborhoods`, -`Current Police Districts`, 
+  select(-`Analysis Neighborhoods`, -`Current Police Districts`, 
          -`Current Supervisor Districts`, -`Location (city)`, 
          -`Location (state)`, -`Location (zip)`,
          -`SF Find Neighborhoods`)
@@ -55,11 +65,15 @@ skim(circ_sf)
 
 What is Circulation Year Active?
 
+I didn't find the codebook very useful (not uncommon.)  But if I have a closer look at home many observations (rows) of each year (year as a category) maybe I can figure out this variable.
+
 ```{r}
 fct_count(circ_sf$`Circulation Active Year`, sort = TRUE)
 ```
 
 What is Total Checkouts?  
+
+At this point, I'm still a little stumped on the `Circulation Active Year` variable but I'll press on.  Let's have a look at the `Total Checkouts` variable.  It looks like the median and mean functions tell me a little more about how skewed this variable is.
 
 ```{r}
 circ_sf %>% 
@@ -71,6 +85,8 @@ circ_sf %>%
   summarise(mean(`Total Checkouts`), median(`Total Checkouts`))
 ```
 
+Speaking of Skewed, let's use a histogram to get a visual on the distribution of this variable.  Wow, a geometric distribution: long head, long tail, most values 5000.  Wait, 5000 checkouts?  WTH?!  
+
 ```{r}
 circ_sf %>% 
   filter(`Circulation Active Year` != "None") %>%
@@ -81,6 +97,7 @@ circ_sf %>%
   ylim(0, 16000)
 ```
 
+O.K. I'm a little bored with those variables.  What else can I learn.  Maybe I can learn something about the distribution of the `Patron` status variable.  Nothing too earth shattering here but at least it makes sense when I look at the data.  O.K. the data aren't completely wack.  
 
 ```{r}
 fct_count(circ_sf$`Patron Type Definition`, sort = TRUE)
@@ -96,6 +113,7 @@ ggplot(circ_sf, aes(fct_rev(fct_infreq(fct_lump(`Patron Type Definition`, prop =
        caption = "data.sfgov.org")
 ```
 
+Time to investigate some more.  I'll have a different look at the `Circulation Active Year`.  This is probably not the right graph.  I'm most years the monthly subdivisions are abnormally symmetrical.  Oh, an equal number of summarized  monthly reports -- probably.  Well there is something weird going on in 2016.  Also, what do I make of the year-by-year increase of total circulation?  
 
 ```{r}
 circ_sf2 <- circ_sf %>% 
@@ -117,6 +135,78 @@ ggplot(circ_sf2,
        caption = "data.sfgov.org") 
 ```
 
+So, that bar graph is a little silly.  I probably should have treated this like time-series data.  Time for a line graph.  Not my favorite graph but probably the right tool for the job.  Let's see.  It looks like 2003 and 2016 are weird but otherwise a stead increase in total circulation.  What?  I wonder why they are tracking total circulation over time?  I guess that's interesting to someone. I could probably do some fancy math and get a monthly total by subtracting the previous total from the each monthly total.  Wow.  that feels like a lot of effort in data transformation.  Wait, isn't this just exploratory.  O.K. that's a good insight but I'll put that off for the moment.
 
+```{r}
+circ_sf2 %>% 
+  group_by(`Circulation Active Year` , circ_month) %>% 
+  summarise(tot = round(sum(`Total Checkouts`))) %>%   
+  mutate(date = 
+           lubridate::parse_date_time(
+             str_c(`Circulation Active Year`, `circ_month`, sep = "-"), 
+             "ym")) %>%   
+  gather("type", "circ", -date, -circ_month, -`Circulation Active Year`) %>% 
+  ggplot(aes(x = date)) +
+    geom_line(aes(y = circ, color = `Circulation Active Year`)) +
+    scale_y_log10()
+```
 
+So that line graph is cool but sometimes, when there are a lot of colors in the legend, it's hard to perceive what is happening.  You know what's cool in ggplot?  `facet_wrap` is cool.  Below is a facet by year that make it much easier to see both steady progress and anomalies by year.  
 
+I forgot to explain why I'm taking a log of the y variable.  Basically, the cumulative nature of the variable combined with the skewing in 2016 makes it hard to see the pattern without normalizing the scale of change.  Logs are cool but they're way easier to see than they are to explain.
+
+```{r}
+circ_sf2 %>% 
+  group_by(`Circulation Active Year` , circ_month) %>% 
+  summarise(tot = round(sum(`Total Checkouts`))) %>%   
+  mutate(date = 
+           lubridate::parse_date_time(
+             str_c(`Circulation Active Year`, `circ_month`, sep = "-"), 
+             "ym")) %>%   
+  gather("type", "circ", -date, -circ_month, -`Circulation Active Year`) %>% 
+  ggplot(aes(x = circ_month)) +
+    geom_line(aes(y = circ, color = circ_month, group = 1)) +
+    scale_y_log10() +
+    scale_x_discrete(labels = NULL) +
+    facet_wrap(~ `Circulation Active Year`) 
+```
+
+O.K.  As noted before, that total circ variable is a little weird.  Mathematically, looking at totals can be misleading.  Fortunately looking at the median **and** mean of the values does make it a bit easier to think about.  
+
+```{r}
+circ_sf2 %>% 
+  group_by(`Circulation Active Year` , circ_month) %>% 
+  summarise(tot = round(sum(`Total Checkouts`)), 
+            mean = round(mean(`Total Checkouts`)), 
+            median = median(`Total Checkouts`)) %>% 
+  mutate(date = 
+           lubridate::parse_date_time(
+             str_c(`Circulation Active Year`, `circ_month`, sep = "-"), 
+             "ym")) %>%   
+  gather("type", "circ", -date, -circ_month, -`Circulation Active Year`) %>% 
+  ggplot(aes(x = date)) +
+    geom_line(aes(y = circ, color = type)) +
+    scale_y_log10()
+```
+
+Alright.  I still like facet_wrap.  Let's have a look at the above where each year is broken out.
+
+```{r}
+circ_sf2 %>% 
+  group_by(`Circulation Active Year` , circ_month) %>% 
+  summarise(tot = round(sum(`Total Checkouts`)), 
+            mean = round(mean(`Total Checkouts`)), 
+            median = median(`Total Checkouts`)) %>%    
+  mutate(date = 
+           lubridate::parse_date_time(
+             str_c(`Circulation Active Year`, `circ_month`, sep = "-"), 
+             "ym")) %>%   
+  gather("type", "circ", -date, -circ_month, -`Circulation Active Year`) %>% 
+  ggplot(aes(x = circ_month)) +
+    geom_line(aes(y = circ, color = type, group = type)) +
+    scale_y_log10() +
+    scale_x_discrete(labels = NULL) +
+    facet_wrap(~ `Circulation Active Year`) 
+```
+
+I guess I'm probably gonna have to do some more math to get monthly totals that are not cumulative.  Wow, this data is not as useful as I had hoped.  Should I open a feature request with the ILS company?  Or, would it be quicker and more empowering to learn how to make my own reports?  This is not a trick question, the answer is actually pretty obvious.
