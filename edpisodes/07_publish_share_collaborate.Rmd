@@ -12,6 +12,8 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+- See complete R Markdown
+
 - More Topics / Publish, Share, & Collaborate
 
     - flexdashboards & HTML Widgets

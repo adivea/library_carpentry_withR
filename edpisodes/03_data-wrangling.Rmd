@@ -19,3 +19,17 @@ knitr::opts_chunk$set(echo = TRUE)
 - pipe `%>%`
 - count
 - summarize
+
+## Five Most commong messy data problems
+
+https://tidyr.tidyverse.org/articles/tidy-data.html#sec:tidying
+
+- Column headers are values, not variable names.
+
+- Multiple variables are stored in one column.
+
+- Variables are stored in both rows and columns.
+
+- Multiple types of observational units are stored in the same - table.
+
+- A single observational unit is stored in multiple tables.

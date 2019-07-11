@@ -13,3 +13,39 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Very **simple** visualizations
 
+- grammar of graphics
+- Two Variable scatter plot
+
+    - continuous and discrete
+    - geom_plot(aes(x = height, y = mass))
+    - geom_plot(aes(x = height, y = mass, size = year))
+    - geom_plot(aes(x = height, y = mass, color = gender))
+    - geom_plot(aes(x = height, y = mass), size = 4, color = "dodgerblue"))
+    
+- Categorical Data
+
+    - forcats is a must `fct_infreq`
+    - stringr and regex is gonna show up 
+    
+        - `str_count`
+        - `str_replace()`
+        
+## Advanced
+
+First, [effective visualizations](https://www.geckoboard.com/learn/data-literacy/data-visualization-tips/)
+
+
+### Dashboards
+
+- See `flexdashboards`
+- See `HTML Widgets`
+
+### Interactivity
+
+- See `ggplotly`
+- See `Shiny`
+
+
+    
+
+
