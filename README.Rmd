@@ -34,9 +34,10 @@ Narrative:  R has become and tool of choice for data science explorations.  **R*
 1. [x] Fork Data Carpentry's _R for Soc Sci_
 1. [x] Apply OpenRefine Examples over top of DC's _R for Soc Sci_
 1. [ ] Pitch to A.Zoss
-1. [ ] Pitch back to C.Eardman (meanwhile, CE will begin a loop in at his end)
+1. [x] CE will begin a loop in at his end)
 1. [ ] Engage with people working on the [Library Carpentry R lesson](https://github.com/LibraryCarpentry/lc-r)
-1. What can be done efficiently?
+1. [ ] What can be done efficiently?
+1. [ ] Pitch back to C.Erdmann 
 
 
 ## Example Output

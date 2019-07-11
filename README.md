@@ -51,12 +51,12 @@ reproducibility, openness, and collaboration.
 2.  [x] Fork Data Carpentry’s *R for Soc Sci*
 3.  [x] Apply OpenRefine Examples over top of DC’s *R for Soc Sci*
 4.  [ ] Pitch to A.Zoss
-5.  [ ] Pitch back to C.Eardman (meanwhile, CE will begin a loop in at
-    his end)
+5.  [x] CE will begin a loop in at his end)
 6.  [ ] Engage with people working on the [Library Carpentry R
     lesson](https://github.com/LibraryCarpentry/lc-r)
-7.  What can be done
-efficiently?
+7.  [ ] What can be done efficiently?
+8.  [ ] Pitch back to
+C.Erdmann
 
 ## Example Output
 
