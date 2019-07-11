@@ -55,7 +55,7 @@ plot2 <- ggplot(data = starwars, ) +
   annotate("text", label = "Orange eyes\n       are rare", x = 2, y = 4.2) +
   coord_flip() +
   labs(title = "Eye color of Star Wars Characters",
-       x = "",
+       x = "", y = "",
        caption = "data source: dplyr::starwars") +
   theme_bw()
   
