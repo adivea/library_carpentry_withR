@@ -55,4 +55,9 @@ reproducibility, openness, and collaboration.
     his end)
 6.  [ ] Engage with people working on the [Library Carpentry R
     lesson](https://github.com/LibraryCarpentry/lc-r)
-7.  What can be done efficiently?
+7.  What can be done
+efficiently?
+
+## Example Output
+
+![](README_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
