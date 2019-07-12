@@ -43,7 +43,9 @@ skim(crossref_data)
 ```
 
 
-## Faceting
+## Subsetting
+
+aka "faceting" in OpenRefine speak.
 
 Two methods to generate a quick table of the languages represented in the dataframe:  `count()` and `forcats::fct_count`.  Since these data are primarily character, it's helpful to learn about factor data and the forcats package. These two tables are the same.  It looks like the data are published in English (spelled two different ways), FRench and Spanish.
 
@@ -54,21 +56,21 @@ crossref_data %>%
 fct_count(crossref_data$Language, sort = TRUE)
 ```
 
-This time, facet on the governing license.  All but six articles are covered by a [createive commons](https://creativecommons.org/) license.
+This time, subset on the governing license.  All but six articles are covered by a [createive commons](https://creativecommons.org/) license.
 
 ```{r}
 crossref_data %>% 
   count(Licence)
 ```
 
-Facet on the publisher.  Sort in descending order.
+Subset on the publisher.  Sort in descending order.
 
 ```{r}
 crossref_data %>% 
   count(Publisher, sort = TRUE)
 ```
 
-Facet by authors, and sort by the most prolific.  This field appears to be a multi-valued field that is pipe `|` separated.  How do we count and visualize how many articles have multiple authors?
+Subset by authors, and sort by the most prolific.  This field appears to be a multi-valued field that is pipe `|` separated.  How do we count and visualize how many articles have multiple authors?
 
 ```{r}
 crossref_data %>% 
