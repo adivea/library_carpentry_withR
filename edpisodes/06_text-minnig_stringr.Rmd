@@ -15,6 +15,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
     - tidytext
     - `strinr::str_replace()`
+    - Brief mention of the importance of regex along link to a [basic regular expressions cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf) and the standard "regex is out of scope" apology + desperate plea to engage with a regex workshop.  For example: [Library Carpentry Regex](https://librarycarpentry.org/lc-data-intro/04-regular-expressions/index.html) | [Interactive Regex101](https://regex101.com/)
 
 - API and Web Scraping    
     - rvest & jsonlite
+    
